@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CategoryFactory extends Factory
 {
+    protected $model = Category::class;
+    
     /**
      * Define the model's default state.
      *
@@ -17,7 +19,10 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => $this->faker->sentence(),
+            'description' => $this->faker->paragraph(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

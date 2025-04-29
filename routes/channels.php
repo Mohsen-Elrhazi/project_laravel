@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
-
+use App\Models\Conversation;
+use App\Models\User;
 /*
 |--------------------------------------------------------------------------
 | Broadcast Channels
@@ -13,6 +14,16 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+// Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+//     return (int) $user->id === (int) $id;
+// });
+
+
+
+Broadcast::channel('chat.{conversationId}', function ($user, $conversationId) {
+    $conversation = Conversation::find($conversationId);
+    
+    // Vérifier si l'utilisateur fait partie de cette conversation
+    return $conversation && 
+           ($conversation->user1_id == $user->id || $conversation->user2_id == $user->id);
 });

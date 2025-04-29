@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Scout\Searchable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable,Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'status',
+        'role_id',
     ];
 
     /**
@@ -42,4 +45,49 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_user');
+    }
+
+    public function createdGroups()
+    {
+        return $this->hasMany(Group::class, 'creator_id');
+    }
+    public function conversations1()
+    {
+        return $this->hasMany(Conversation::class, 'user1_id');
+    }
+
+    public function conversations2()
+    {
+        return $this->hasMany(Conversation::class, 'user2_id');
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+    
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+        ];
+    }
+
+ 
 }
